@@ -17,12 +17,20 @@ def load_data(data_path: Path) -> Tuple:
 
 
 def high_corr(df: pd.DataFrame, th: float) -> pd.DataFrame:
+    """
+    Commonly, correlations are categorized as follows:
+    0.00 to 0.19: Very weak or no correlation
+    0.20 to 0.34: Weak correlation
+    0.35 to 0.59: Moderate correlation
+    0.60 to 0.79: Strong correlation
+    0.80 to 1.00: Very strong correlation
+    """
     corr = df.corr()
     corr = pd.DataFrame(corr)
     corr_high = corr[abs(corr.Energy) >= th]
     new_df = df[corr_high.index]
     for col in new_df.columns:
-        if new_df[f'{col}'].isnull():
+        if new_df[f'{col}'].isnull().sum() > 0:
             new_df[f'{col}'].fillna((new_df[f'{col}'].mean()), inplace=True)
 
     return new_df
@@ -48,9 +56,9 @@ def plot(y_pred, y_test, figsize: (int, int), xlabel: str, ylabel: str, title: s
     x = np.arange(len(y_test))  # Create an array of indices
     plt.plot(x, y_test, label='Actual', color='blue', marker='o', linestyle='-', markersize=5)
     plt.plot(x, y_pred, label='Predicted', color='red', marker='x', linestyle='--', markersize=5)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.title(title)
+    plt.xlabel(f'{xlabel}')
+    plt.ylabel(f'{ylabel}')
+    plt.title(f'{title}')
     plt.legend()
     plt.show()
     return

@@ -8,3 +8,4 @@
 data/*
 .pickle
 .venv
+__pycache__/*

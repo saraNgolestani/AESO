@@ -1,5 +1,4 @@
 from array import array
-import numpy as np
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.model_selection import GridSearchCV
@@ -20,7 +19,7 @@ def train(param_grid: {}, model: GradientBoostingRegressor, x_train: array, y_tr
     return grid_search.best_estimator_
 
 
-def predict(model: GradientBoostingRegressor, x_test: array, y_test: array):
+def predict(model: GradientBoostingRegressor, x_test: array, y_test: array) -> array:
     # Make predictions with the best model
     y_pred = model.predict(x_test)
 
@@ -32,4 +31,4 @@ def predict(model: GradientBoostingRegressor, x_test: array, y_test: array):
     print("Mean Squared Error:", mse)
     print("Mean Absolute Error:", mae)
     print("R-squared:", r2)
-    return
+    return y_pred
