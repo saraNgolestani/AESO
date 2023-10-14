@@ -1,12 +1,12 @@
 from pathlib import Path
-from typing import List, Text, Tuple
-
+from typing import Tuple
 from matplotlib import pyplot as plt
 from sklearn.ensemble import GradientBoostingRegressor
 import numpy as np
 import pandas as pd
 from numpy import array
 import joblib
+from statsmodels.stats.stattools import jarque_bera
 
 
 def load_data(data_path: Path) -> Tuple:
@@ -20,8 +20,8 @@ def high_corr(df: pd.DataFrame, th: float) -> pd.DataFrame:
     """
     Commonly, correlations are categorized as follows:
     0.00 to 0.19: Very weak or no correlation
-    0.20 to 0.34: Weak correlation
-    0.35 to 0.59: Moderate correlation
+    0.20 to 0.39: Weak correlation
+    0.40 to 0.59: Moderate correlation
     0.60 to 0.79: Strong correlation
     0.80 to 1.00: Very strong correlation
     """
@@ -43,7 +43,7 @@ def in_out_array(df: pd.DataFrame) -> Tuple[array, array]:
 
 def save_model(model: GradientBoostingRegressor, model_name: str):
     joblib.dump(model, model_name.join('.pkl'))
-    return
+    return 'model saved'
 
 
 def load_model(model_name: str) -> GradientBoostingRegressor:
@@ -51,19 +51,26 @@ def load_model(model_name: str) -> GradientBoostingRegressor:
     return model
 
 
-def plot(y_pred, y_test, figsize: (int, int), xlabel: str, ylabel: str, title: str):
-    plt.figure(figsize=figsize)
+def plot(y_pred, y_test, fig_size: (int, int), x_label: str, y_label: str, title: str):
+    plt.figure(figsize=fig_size)
     x = np.arange(len(y_test))  # Create an array of indices
     plt.plot(x, y_test, label='Actual', color='blue', marker='o', linestyle='-', markersize=5)
     plt.plot(x, y_pred, label='Predicted', color='red', marker='x', linestyle='--', markersize=5)
-    plt.xlabel(f'{xlabel}')
-    plt.ylabel(f'{ylabel}')
+    plt.xlabel(f'{x_label}')
+    plt.ylabel(f'{y_label}')
     plt.title(f'{title}')
     plt.legend()
     plt.show()
     return
 
 
-def statistics():
+def statistics(df: pd.DataFrame):
+    corr_df = df.corr()
+    print(corr_df.Energy)
+    for col in df.columns:
+        print(f'For {col} we have \n mean of : {df.col.mean()} \n var of: {df.col.var()} \n '
+              f'min of {df.col.min()} \n max of {df.col.max()} \n skewness of {df.col.skew()} \n '
+              f'kurtosis of {df.col.kurtosis()} and the goodness of fittest of {jarque_bera(np.array(df.col))}')
+
     return
 
