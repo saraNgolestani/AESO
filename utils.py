@@ -68,9 +68,10 @@ def statistics(df: pd.DataFrame):
     corr_df = df.corr()
     print(corr_df.Energy)
     for col in df.columns:
-        print(f'For {col} we have \n mean of : {df.col.mean()} \n var of: {df.col.var()} \n '
-              f'min of {df.col.min()} \n max of {df.col.max()} \n skewness of {df.col.skew()} \n '
-              f'kurtosis of {df.col.kurtosis()} and the goodness of fittest of {jarque_bera(np.array(df.col))}')
+        df_col = df[f'{col}']
+        print(f'For {col} we have \n mean of : {df_col.mean()} \n var of: {df_col.var()} \n '
+              f'min of {df_col.min()} \n max of {df_col.max()} \n skewness of {df_col.skew()} \n '
+              f'kurtosis of {df_col.kurtosis()} \n and the goodness of fittest of {jarque_bera(np.array(df_col))[0]}')
 
     return
 
