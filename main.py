@@ -3,13 +3,12 @@ The get_data function should load the raw data in any format from any place and 
 """
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
-from typing import List, Text, Tuple
-
-import pandas as pd
+from typing import List, Tuple
 import structlog
+from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.model_selection import train_test_split
 
-from utils import load_data, high_corr, in_out_array, plot, statistics
+from utils import load_data, high_corr, in_out_array, plot, statistics, save_model, load_model
 from models import train, predict
 
 logger = structlog.getLogger(__name__)
@@ -87,13 +86,37 @@ def retrieve_data(arguments: Namespace) -> Tuple:
         x, y = in_out_array(filtered_df)
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.15)
 
-    return x_train, x_test, y_train, y_test
+    return x_train, x_test, y_train, y_test, filtered_df
 
 
 def run(arguments_list: List = None):
     """Run step"""
     arguments = parse_arguments(arguments_list=arguments_list)
-    x_train, x_test, y_train, y_test = retrieve_data(arguments)
+    x_train, x_test, y_train, y_test, filtered_df = retrieve_data(arguments)
+
+    if arguments.phase == 'train':
+        param_grid = {
+            'n_estimators': [100, 200, 300],
+            'learning_rate': [0.01, 0.1, 0.5],
+            'max_depth': [3, 4, 5]
+        }
+
+        # Create the Gradient Boosting Regressor model
+        init_model = GradientBoostingRegressor(random_state=42)
+        model = train(param_grid, init_model, x_train, y_train)
+        y_pred = predict(model, x_test, y_test)
+        plot(y_pred, y_test, (16, 12), 'Data Points', f'Energy Values',
+             f'Actual Vs Predicted Values GradientBoostRegressor on {arguments.data_slice} Data')
+        save_model(model, arguments.model_path)
+
+        if arguments.phase == 'predict':
+            model = load_model(arguments.model_path)
+            y_pred = predict(model, x_test, y_test)
+            plot(y_pred, y_test, (16, 12), 'Data Points', f'Energy Values',
+                 f'Actual Vs Predicted Values GradientBoostRegressor on {arguments.data_slice} Data')
+
+        if arguments.phase == 'statistics':
+            statistics(filtered_df)
 
 
 if __name__ == '__main__':
