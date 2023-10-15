@@ -12,6 +12,14 @@ from yaml import dump, safe_load
 
 
 def load_data(data_path: Path) -> Tuple:
+
+    """
+    Load data from an Excel file into pandas dataframes.
+    :param data_path: The path to the Excel file.
+    :return: Tuple containing three dataframes: (init_df, init_stats_df, init_corr_df)
+    """"""
+    """
+
     init_df = pd.read_excel(data_path, sheet_name='Dataset')
     init_stats_df = pd.read_excel(data_path, sheet_name='Statistics')
     init_corr_df = pd.read_excel(data_path, sheet_name='Correlation')
@@ -20,6 +28,16 @@ def load_data(data_path: Path) -> Tuple:
 
 def high_corr(df: pd.DataFrame, th: float) -> pd.DataFrame:
     """
+    Filter a dataframe to retain columns with high correlation to the 'Energy' column.
+
+    Parameters:
+    - df (pd.DataFrame): The input dataframe.
+    - th (float): The correlation threshold.
+
+    Returns:
+    A new dataframe containing only high-correlation columns.
+    
+    """"""
     Commonly, correlations are categorized as follows:
     0.00 to 0.19: Very weak or no correlation
     0.20 to 0.39: Weak correlation
@@ -39,21 +57,59 @@ def high_corr(df: pd.DataFrame, th: float) -> pd.DataFrame:
 
 
 def in_out_array(df: pd.DataFrame) -> Tuple[array, array]:
+    """
+        Extract features and target variable from a dataframe and return them as numpy arrays.
 
+        Parameters:
+        - df (pd.DataFrame): The input dataframe.
+
+        Returns:
+        A tuple containing two arrays: (features, target).
+        """
     return np.array(df[df.columns[1:]]), np.array(df[df.columns[0]])
 
 
 def save_model(model: GradientBoostingRegressor, model_name: str):
+    """
+        Save a scikit-learn model to a file using joblib.
+
+        Parameters:
+        - model (GradientBoostingRegressor): The trained model to be saved.
+        - model_name (str): The name of the saved model file.
+
+        Returns:
+        A message indicating that the model has been saved.
+        """
     joblib.dump(model, model_name+'.pkl')
     return 'model saved'
 
 
 def load_model(model_name: str) -> GradientBoostingRegressor:
+    """
+    Load a scikit-learn model from a file using joblib.
+
+    Parameters:
+    - model_name (str): The name of the saved model file.
+
+    Returns:
+    The loaded scikit-learn model.
+    """
     model = joblib.load(model_name+'.pkl')
     return model
 
 
 def plot(y_pred, y_test, fig_size: (int, int), x_label: str, y_label: str, title: str):
+    """
+        Create a line plot to visualize actual and predicted values.
+
+        Parameters:
+        - y_pred: Predicted values.
+        - y_test: Actual values.
+        - fig_size (tuple): Figure size (width, height).
+        - x_label (str): Label for the x-axis.
+        - y_label (str): Label for the y-axis.
+        - title (str): Title of the plot.
+    """
     plt.figure(figsize=fig_size)
     x = np.arange(len(y_test))  # Create an array of indices
     plt.plot(x, y_test, label='Actual', color='blue', marker='o', linestyle='-', markersize=5)
@@ -67,6 +123,12 @@ def plot(y_pred, y_test, fig_size: (int, int), x_label: str, y_label: str, title
 
 
 def statistics(df: pd.DataFrame):
+    """
+        Calculate and print various statistics for columns in a dataframe.
+
+        Parameters:
+        - df (pd.DataFrame): The input dataframe.
+    """
     corr_df = df.corr()
     print(corr_df.Energy)
     for col in df.columns:

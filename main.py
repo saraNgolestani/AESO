@@ -1,5 +1,5 @@
 """
-The get_data function should load the raw data in any format from any place and return it
+A minni application for training and evaluating ML models on AESO energy consumption data
 """
 import os.path
 from argparse import ArgumentParser, Namespace
@@ -32,6 +32,15 @@ def parse_arguments(config: Dict) -> Namespace:
 
 
 def retrieve_data(arguments: Namespace) -> Tuple:
+    """
+    Retrieve and process data based on the selected data slice.
+
+    Parameters:
+    - arguments (Namespace): Parsed command line arguments and configuration settings.
+
+    Returns:
+    - x_train, x_test, y_train, y_test, filtered_df (tuple): Processed data and DataFrame.
+    """
 
     init_df, init_stats_df, init_corr_df = load_data(Path(arguments.data_path))
 
@@ -91,7 +100,13 @@ def retrieve_data(arguments: Namespace) -> Tuple:
 
 
 def run(config: Dict):
-    """Run step"""
+    """
+        Main execution function for training, predicting, or computing statistics.
+
+        Parameters:
+        - config (dict): Configuration settings loaded from a YAML file.
+    """
+
     arguments = parse_arguments(config)
     x_train, x_test, y_train, y_test, filtered_df = retrieve_data(arguments)
 
