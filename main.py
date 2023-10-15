@@ -1,6 +1,7 @@
 """
 The get_data function should load the raw data in any format from any place and return it
 """
+import os.path
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from typing import List, Tuple
@@ -17,14 +18,14 @@ logger = structlog.getLogger(__name__)
 def parse_arguments(arguments_list: List) -> Namespace:
     """Parse arguments list"""
     parser = ArgumentParser(__name__)
-    parser.add_argument('--data_path', type=Path, help='data path')
+    parser.add_argument('--data_path', type=Path, help='data path',
+                        default='./data/ForecastAnalyst_CalgaryDailyEnergyDataset_2023.xlsx')
     parser.add_argument('--model_path', type=Path, help='a path to save and load model from')
-    parser.add_argument('--data_slice', type=str, help='slice of the data you want to do predictions on.',
+    parser.add_argument('--data_slice', type=str, help='part of data you want to do prediction on', default='Summer',
                         choices=['General', 'Summer', 'Fall', 'Winter', 'Spring', 'Weekend', 'COVID Weekend', 'COVID'])
     parser.add_argument('--phase', type=str, help='the process you wanna do on your selected part of data',
-                        choices=['train', 'predict', 'statistics'])
-    parser.add_argument('--config_path', type=Path, help='Path to data acquisition config file')
-    parser.add_argument('--th', type=int, help='threshold for correlation filtering', default='0.4')
+                        choices=['train', 'predict', 'statistics'], default='statistics')
+    parser.add_argument('--th', type=int, help='threshold for correlation filtering', default=0.4)
 
     return parser.parse_args(arguments_list)
 
@@ -107,16 +108,16 @@ def run(arguments_list: List = None):
         y_pred = predict(model, x_test, y_test)
         plot(y_pred, y_test, (16, 12), 'Data Points', f'Energy Values',
              f'Actual Vs Predicted Values GradientBoostRegressor on {arguments.data_slice} Data')
-        save_model(model, arguments.model_path)
+        save_model(model, os.path.join('./models', arguments.data_slice))
 
-        if arguments.phase == 'predict':
-            model = load_model(arguments.model_path)
-            y_pred = predict(model, x_test, y_test)
-            plot(y_pred, y_test, (16, 12), 'Data Points', f'Energy Values',
-                 f'Actual Vs Predicted Values GradientBoostRegressor on {arguments.data_slice} Data')
+    if arguments.phase == 'predict':
+        model = load_model(os.path.join('./models', arguments.data_slice))
+        y_pred = predict(model, x_test, y_test)
+        plot(y_pred, y_test, (16, 12), 'Data Points', f'Energy Values',
+             f'Actual Vs Predicted Values GradientBoostRegressor on {arguments.data_slice} Data')
 
-        if arguments.phase == 'statistics':
-            statistics(filtered_df)
+    if arguments.phase == 'statistics':
+        statistics(filtered_df)
 
 
 if __name__ == '__main__':

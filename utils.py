@@ -1,3 +1,4 @@
+import os.path
 from pathlib import Path
 from typing import Tuple
 from matplotlib import pyplot as plt
@@ -42,12 +43,12 @@ def in_out_array(df: pd.DataFrame) -> Tuple[array, array]:
 
 
 def save_model(model: GradientBoostingRegressor, model_name: str):
-    joblib.dump(model, model_name.join('.pkl'))
+    joblib.dump(model, model_name+'.pkl')
     return 'model saved'
 
 
 def load_model(model_name: str) -> GradientBoostingRegressor:
-    model = joblib.load(model_name.join('.pkl'))
+    model = joblib.load(model_name+'.pkl')
     return model
 
 

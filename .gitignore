@@ -9,3 +9,4 @@ data/*
 .pickle
 .venv
 __pycache__/*
+models/*
