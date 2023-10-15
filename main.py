@@ -4,30 +4,31 @@ The get_data function should load the raw data in any format from any place and 
 import os.path
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
-from typing import List, Tuple
+from typing import Tuple, Dict
 import structlog
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.model_selection import train_test_split
 
-from utils import load_data, high_corr, in_out_array, plot, statistics, save_model, load_model
+from utils import load_data, high_corr, in_out_array, plot, statistics, save_model, load_model, load_yaml_config
 from models import train, predict
 
 logger = structlog.getLogger(__name__)
 
 
-def parse_arguments(arguments_list: List) -> Namespace:
+def parse_arguments(config: Dict) -> Namespace:
     """Parse arguments list"""
     parser = ArgumentParser(__name__)
     parser.add_argument('--data_path', type=Path, help='data path',
-                        default='./data/ForecastAnalyst_CalgaryDailyEnergyDataset_2023.xlsx')
+                        default=config['PATH']['Data'])
     parser.add_argument('--model_path', type=Path, help='a path to save and load model from')
-    parser.add_argument('--data_slice', type=str, help='part of data you want to do prediction on', default='Summer',
+    parser.add_argument('--data_slice', type=str, help='part of data you want to do prediction on',
+                        default=config['DATA_SLICE'],
                         choices=['General', 'Summer', 'Fall', 'Winter', 'Spring', 'Weekend', 'COVID Weekend', 'COVID'])
     parser.add_argument('--phase', type=str, help='the process you wanna do on your selected part of data',
-                        choices=['train', 'predict', 'statistics'], default='statistics')
-    parser.add_argument('--th', type=int, help='threshold for correlation filtering', default=0.4)
-
-    return parser.parse_args(arguments_list)
+                        choices=['train', 'predict', 'statistics'], default=config['PHASE'])
+    parser.add_argument('--th', type=int, help='threshold for correlation filtering', default=config['TH'])
+    args = parser.parse_args()
+    return args
 
 
 def retrieve_data(arguments: Namespace) -> Tuple:
@@ -90,9 +91,9 @@ def retrieve_data(arguments: Namespace) -> Tuple:
     return x_train, x_test, y_train, y_test, filtered_df
 
 
-def run(arguments_list: List = None):
+def run(config: Dict):
     """Run step"""
-    arguments = parse_arguments(arguments_list=arguments_list)
+    arguments = parse_arguments(config)
     x_train, x_test, y_train, y_test, filtered_df = retrieve_data(arguments)
 
     if arguments.phase == 'train':
@@ -121,4 +122,5 @@ def run(arguments_list: List = None):
 
 
 if __name__ == '__main__':
-    run()
+    config = load_yaml_config(Path('config.yaml'))
+    run(config)

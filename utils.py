@@ -1,6 +1,6 @@
 import os.path
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Dict
 from matplotlib import pyplot as plt
 from sklearn.ensemble import GradientBoostingRegressor
 import numpy as np
@@ -8,6 +8,7 @@ import pandas as pd
 from numpy import array
 import joblib
 from statsmodels.stats.stattools import jarque_bera
+from yaml import dump, safe_load
 
 
 def load_data(data_path: Path) -> Tuple:
@@ -76,3 +77,25 @@ def statistics(df: pd.DataFrame):
 
     return
 
+
+def load_yaml_config(config_path: Path) -> Dict:
+    """Load YAML config file and return a parsed, ready to consume, dictionary
+
+    param config_path: location of the config file
+    :return: config dictionary
+    """
+    with config_path.open(mode='r') as stream:
+        config = safe_load(stream)
+    return config
+
+
+def write_yaml_config(config: Dict, path: Path):
+    """Write config object (dictionary) to a YAML config file
+
+    param path:
+    :param config:
+    :config: config object
+    :param config_path: location to write the config file
+    """
+    with path.open(mode='w') as stream:
+        dump(config, stream)
