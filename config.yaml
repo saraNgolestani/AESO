@@ -1,8 +1,9 @@
+DATA_SLICE: 'Weekend' #Options ['General', 'Summer', 'Fall', 'Winter', 'Spring', 'Weekend', 'COVID Weekend', 'COVID']
+PHASE: 'statistics' #Options ['train', 'predict', 'statistics']
+
 PATHS:
   Data: './data/ForecastAnalyst_CalgaryDailyEnergyDataset_2023.xlsx'
   Model: './model/Summer.pkl'
 
-DATA_SLICE:
-PHASE: 'Summer', #Options ['General', 'Summer', 'Fall', 'Winter', 'Spring', 'Weekend', 'COVID Weekend', 'COVID']
 TH: 0.4
 

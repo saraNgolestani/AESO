@@ -1,0 +1,11 @@
+name: aeso
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python==3.9.6
+  - pip==23.2.1
+  - pip:
+    - -r ./requirements.txt

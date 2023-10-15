@@ -19,7 +19,7 @@ def parse_arguments(config: Dict) -> Namespace:
     """Parse arguments list"""
     parser = ArgumentParser(__name__)
     parser.add_argument('--data_path', type=Path, help='data path',
-                        default=config['PATH']['Data'])
+                        default=config['PATHS']['Data'])
     parser.add_argument('--model_path', type=Path, help='a path to save and load model from')
     parser.add_argument('--data_slice', type=str, help='part of data you want to do prediction on',
                         default=config['DATA_SLICE'],
@@ -42,51 +42,50 @@ def retrieve_data(arguments: Namespace) -> Tuple:
         x_train, y_train = x[:-92], y[:-92]
         x_test, y_test = x[-92:], y[-92:]
 
-    if arguments.data_slice == 'Fall':
+    elif arguments.data_slice == 'Fall':
         df = init_df[(init_df.September == 1) | (init_df.October == 1) | (init_df.November == 1)]
         filtered_df = high_corr(df, arguments.th)
         x, y = in_out_array(filtered_df)
         x_train, y_train = x[:-92], y[:-92]
         x_test, y_test = x[-92:], y[-92:]
 
-    if arguments.data_slice == 'Winter':
+    elif arguments.data_slice == 'Winter':
         df = init_df[(init_df.December == 1) | (init_df.January == 1) | (init_df.March == 1)]
         filtered_df = high_corr(df, arguments.th)
         x, y = in_out_array(filtered_df)
         x_train, y_train = x[:-92], y[:-92]
         x_test, y_test = x[-92:], y[-92:]
 
-    if arguments.data_slice == 'Spring':
+    elif arguments.data_slice == 'Spring':
         df = init_df[(init_df.March == 1) | (init_df.April == 1) | (init_df.May == 1)]
         filtered_df = high_corr(df, arguments.th)
         x, y = in_out_array(filtered_df)
         x_train, y_train = x[:-92], y[:-92]
         x_test, y_test = x[-92:], y[-92:]
-    if arguments.data_slice == 'Weekend':
+    elif arguments.data_slice == 'Weekend':
         df = init_df[(init_df['Saturday'] == 1) | (init_df['Sunday'] == 1) | (init_df['Sun_Hol'] == 1)]
         filtered_df = high_corr(df, arguments.th)
         x, y = in_out_array(filtered_df)
-        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1)
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1, random_state=42)
 
-    if arguments.data_slice == 'COVID Weekend':
+    elif arguments.data_slice == 'COVID Weekend':
         df = init_df[((init_df['Saturday'] == 1) & (init_df['COVID19'] >= 0.01)) |
                               ((init_df['Sunday'] == 1) & (init_df['COVID19'] >= 0.01)) |
                               ((init_df['Sun_Hol'] == 1) & (init_df['COVID19'] >= 0.01))]
         filtered_df = high_corr(df, arguments.th)
         x, y = in_out_array(filtered_df)
-        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1)
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1, random_state=42)
 
-    if arguments.data_slice == 'COVID':
+    elif arguments.data_slice == 'COVID':
         df = init_df[init_df['COVID19'] >= 0.01]
         filtered_df = high_corr(df, arguments.th)
         x, y = in_out_array(filtered_df)
-        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1)
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1, random_state=42)
 
     else:
-
         filtered_df = high_corr(init_df[:2434], arguments.th)
         x, y = in_out_array(filtered_df)
-        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.15)
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.15, random_state=42)
 
     return x_train, x_test, y_train, y_test, filtered_df
 
