@@ -112,9 +112,9 @@ def run(config: Dict):
 
     if arguments.phase == 'train':
         param_grid = {
-            'n_estimators': [100, 200, 300],
-            'learning_rate': [0.01, 0.1, 0.5],
-            'max_depth': [3, 4, 5]
+            'n_estimators': [50, 100, 200, 300],
+            'learning_rate': [0.01, 0.1, 0.5, 0.2],
+            'max_depth': [3, 4, 5, 6]
         }
 
         # Create the Gradient Boosting Regressor model

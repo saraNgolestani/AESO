@@ -23,7 +23,7 @@ def load_data(data_path: Path) -> Tuple:
     init_df = pd.read_excel(data_path, sheet_name='Dataset')
     init_stats_df = pd.read_excel(data_path, sheet_name='Statistics')
     init_corr_df = pd.read_excel(data_path, sheet_name='Correlation')
-    return init_df, init_stats_df, init_corr_df
+    return init_df[:2434], init_stats_df, init_corr_df
 
 
 def high_corr(df: pd.DataFrame, th: float) -> pd.DataFrame:

@@ -1,4 +1,4 @@
-DATA_SLICE: 'Weekend' #Options ['General', 'Summer', 'Fall', 'Winter', 'Spring', 'Weekend', 'COVID Weekend', 'COVID']
+DATA_SLICE: 'Spring' #Options ['General', 'Summer', 'Fall', 'Winter', 'Spring', 'Weekend', 'COVID Weekend', 'COVID']
 PHASE: 'statistics' #Options ['train', 'predict', 'statistics']
 
 PATHS:
